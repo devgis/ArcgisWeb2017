@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="no-js">
+	<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>GIS系统</title>
+<meta name="description" content="Blueprint: Slide and Push Menus" />
+<meta name="keywords" content="sliding menu, pushing menu, navigation, responsive, menu, css, jquery" />
+<meta name="author" content="Codrops" />
+<link rel="stylesheet" href="3.20/esri/themes/calcite/dijit/calcite.css">
+<link rel="stylesheet" href="3.20/esri/themes/calcite/esri/esri.css">
+
+<script src="3.20/init.js"></script>
+<link rel="shortcut icon" href="../favicon.ico">
+<link rel="stylesheet" type="text/css" href="css/default.css" />
+<link rel="stylesheet" type="text/css" href="css/component.css" />
+<script src="js/modernizr.custom.js"></script>
+<script src="js/jquery-2.2.2.min.js"></script>
+<script src="js/classie.js"></script>
+
+<style> 
+.cbp-spmenu{overflow-y:auto;} 
+</style>
+<link rel="stylesheet" href="js/skin/default/layer.css">
+<script src="js/layer.js"></script>
+<!--<link id="artDialog-skin" href="js/skins/default.css" rel="stylesheet" />-->
+<!--<link id="bs-css" href="css/bootstrap-cerulean.min.css" rel="stylesheet">
+<link href="css/charisma-app.css" rel="stylesheet">-->
+   <style>
+      #map 
+      {
+          width:100%;
+          height:100%;
+         margin: 0;
+         padding: 0;
+         position:inherit;
+      }
+      .container,.action,.zoomTo
+      {
+          float:left;
+          margin-left:240px;
+          position:fixed;
+          height: 100%;
+      }
+      .esriIconFallbackText,.actionList
+      {
+          display:none;
+      }
+   </style>
+   
+   <script>
+        //需要获取到的json格式
+       var listStr = "[{\"id\":\"001\",\"infourl\":\"http://www.baidu.com\",\"name\":\" 测试1\",\"remarks\":\" 简介1\",\"geo\":\"[[108, 34], [108, 35], [109, 35], [109, 34], [108, 34]]\" },{\"id\":\"001\",\"infourl\":\"http://www.baidu.com\",\"name\":\" 测试2\",\"remarks\":\" 简介2\",\"geo\":\"[[109, 34], [109, 35], [110, 35], [110, 34], [109, 34]]\" },{\"id\":\"001\",\"infourl\":\"http://www.baidu.com\",\"name\":\" 测试3\",\"remarks\":\" 简介3\",\"geo\":\"[[108, 34], [108, 35], [109, 35], [109, 34], [108, 34]]\" }]";
+       dojo.require("esri/map");
+       dojo.require("dojo/_base/lang");
+       dojo.require("dojo/json");
+       dojo.require("esri/config");
+       dojo.require("esri/tasks/GeometryService");
+       dojo.require("esri/tasks/AreasAndLengthsParameters");
+       dojo.require("dojo/dom-class");
+       dojo.require("esri/dijit/Popup");
+       dojo.require("esri/dijit/PopupTemplate");
+       dojo.require("esri/toolbars/draw");
+       dojo.require("esri/symbols/SimpleFillSymbol");
+       dojo.require("esri/geometry/Point");
+       dojo.require("dojo/on");
+       dojo.require("dojo/dom");
+       dojo.require("dojo/_base/Color");
+       dojo.require("esri/dijit/Scalebar");
+       dojo.require("esri/dijit/InfoWindowLite");
+       dojo.require("esri/dijit/InfoWindow");
+       dojo.require("dojo/dom-construct");
+       dojo.require("esri/symbols/SimpleMarkerSymbol");
+       dojo.require("esri/symbols/PictureMarkerSymbol");
+       dojo.require("esri/symbols/SimpleLineSymbol");
+       dojo.require("esri/graphic");
+       dojo.require("dojo/dom-style");
+       dojo.require("dojo/query");
+       dojo.require("esri/layers/GraphicsLayer");
+       dojo.require("dojox/widget/ColorPicker");
+       dojo.require("esri/layers/CSVLayer");
+       dojo.require("esri/Color");
+       dojo.require("esri/renderers/SimpleRenderer");
+       dojo.require("esri/InfoTemplate");
+       dojo.require("esri/urlUtils");
+       dojo.require("esri/geometry/scaleUtils");
+       dojo.require("esri/dijit/HomeButton");
+       dojo.require("esri/tasks/RouteTask");
+       dojo.require("esri/toolbars/navigation");
+       dojo.require("esri/tasks/RouteParameters");
+       dojo.require("esri/tasks/FeatureSet");
+       dojo.require("esri/InfoTemplate");
+       dojo.require("dijit/Menu");
+       dojo.require("dijit/MenuItem");
+       dojo.require("esri/geometry/jsonUtils");
+       var mapServiceURL = "http://cache1.arcgisonline.cn/arcgis/rest/services/ChinaOnlineCommunity/MapServer";
+       var searchNear;
+       var showFunc;
+       var map;
+       var unLayer; //保存信息的图层
+       require([
+
+        "esri/map",
+        "esri/SpatialReference",
+        "esri/dijit/Search",
+        "esri/layers/ArcGISDynamicMapServiceLayer",
+        "esri/layers/ArcGISTiledMapServiceLayer",
+        "esri/layers/FeatureLayer",
+        "esri/layers/ImageParameters",
+        "esri/symbols/SimpleFillSymbol",
+        "esri/InfoTemplate",
+        "esri/tasks/query",
+        "esri/tasks/QueryTask",
+        "esri/geometry/geometryEngine",
+        "esri/geometry/Point",
+        "esri/geometry/Polygon",
+        "esri/tasks/BufferParameters",
+       "esri/tasks/GeometryService",
+        "dojo/domReady!"
+
+      ], function (Map, SpatialReference, Search, ArcGISDynamicMapServiceLayer, ArcGISTiledMapServiceLayer, FeatureLayer, ImageParameters, SimpleFillSymbol, InfoTemplate, Query, QueryTask, geometryEngine, Point, Polygon, BufferParameters, GeometryService) {
+          map = new Map("map", {
+              //center: [116.5, 40.08], // lon, lat
+              zoom: 7
+          });
+
+          var imageParameters = new ImageParameters();
+          imageParameters.format = "PNG32"; //set the image type to PNG24, note default is PNG8.
+          /* 如果是普通地图服务就用这种方式加载
+          var dLayer = new ArcGISDynamicMapServiceLayer(mapServiceURL});
+          map.addLayer(dLayer);
+          */
+
+          var tiled = new ArcGISTiledMapServiceLayer(mapServiceURL);
+          map.addLayer(tiled);
+
+
+
+          var infotemp = new esri.InfoTemplate();
+          infotemp.setTitle("<b>${name}</b>"); //"<b>${name}</b>"
+          infotemp.setContent("<span>${name}简介:${remarks}</span>");
+
+//          unLayer = new esri.layers.GraphicsLayer("unLayer", { infoTemplate: infotemp });
+          //          map.addLayer(unLayer);
+
+          unLayer = new esri.layers.GraphicsLayer("unLayer");
+          map.addLayer(unLayer);
+
+          unLayer.on("mouse-up", function (evt) {
+              //window.open(evt.graphic.attributes["infourl"], "_blank", "top=100,left=100,width=100,height=100,menubar=yes,scrollbars=no,toolbar=yes,status=yes");
+              layer.open({
+                  type: 2,
+                  title: 'layer mobile页',
+                  shadeClose: true,
+                  shade: 0.8,
+                  area: ['380px', '90%'],
+                  content: evt.graphic.attributes["infourl"] //iframe的url
+              }); 
+          });
+
+          var pt = new Point(117, 36.65, new SpatialReference({ wkid: 4326 }));
+          map.centerAt(pt);
+
+          var symbol = new SimpleFillSymbol().setOutline(new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleLineSymbol.STYLE_SOLID, new esri.Color([255, 0, 0]), 5));     //.setColor(null).outline.setColor("red");
+          showPolygon = function (item) {
+              unLayer.clear();
+              var arrPoints = JSON.parse(item.geo);
+              var polygon = new Polygon(new SpatialReference({ wkid: 4326 }));
+              //添加多边形的各个角的顶点坐标，注意：首尾要链接，也就是说，第一个点和最后一个点要一致  
+              polygon.addRing(arrPoints);
+              var graphic = new esri.Graphic(polygon, symbol);
+              graphic.setAttributes({ "id": item.id, "infourl": item.infourl, "name": item.name, "remarks": item.remarks });
+              var infotemp = new esri.InfoTemplate();
+              infotemp.setTitle("<b>${name}</b>"); //"<b>${name}</b>"
+              infotemp.setContent("<span>${name}简介:${remarks}</span>");
+              //graphic.infoTemplate = infotemp;
+              unLayer.add(graphic);
+
+
+              //文本标注
+              var font = new esri.symbol.Font();
+              font.setSize("13pt");
+              font.setFamily("微软雅黑");
+
+
+              var textSymbol = new esri.symbol.TextSymbol(item.name);  //strCarNo
+              textSymbol.setColor(new esri.Color([255, 25, 125, 1]));
+              textSymbol.setFont(font);
+              //textSymbol.setOffset(60, -4);
+              var graphicText = esri.Graphic(polygon.getCentroid(), textSymbol); // ,null
+              unLayer.add(graphicText);
+
+              /*
+              map.infoWindow.setTitle("<b>" + item.name + "</b>");
+              map.infoWindow.setContent("<span>简介:" + item.remarks + "</span>");
+              var screenpoint = map.toScreen(graphic.geometry);
+              map.infoWindow.show(screenpoint);
+              */
+
+              map.centerAt(polygon.getCentroid());
+
+          };
+      });
+      var arrList = JSON.parse(listStr);
+      $(document).ready(function () {
+          
+          $("#cbp-spmenu-s1").empty();
+          $("#cbp-spmenu-s1").append("<h3>列表</h3>");
+          for (var i = 0; i < arrList.length; i++) {
+              //var itemstr = "<a href=\"#\" onclick=\"javascript:show('" + JSON.stringify(arrList[i]) + "')\">" + arrList[i].name + "</a>";
+              var itemstr = "<a href=\"#\" onclick=\"javascript:show('" + i + "')\">" + arrList[i].name + "</a>";
+              $("#cbp-spmenu-s1").append(itemstr);
+          };
+      });
+
+
+      function show(i) {
+          //alert(arrList[i].name);
+          showPolygon(arrList[i]);
+      }
+      
+      //初始化菜单
+      //onclick = "showPolygon([[-180, -90], [-180, 90], [180, 90], [180, -90], [-180, -90]])"
+       //drawPolygon([[-180, -90], [-180, 90], [180, 90], [180, -90], [-180, -90]]);
+   </script>
+	</head>
+	<body class="calcite cbp-spmenu-push">
+		<nav class=" cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left cbp-spmenu-open" id="cbp-spmenu-s1">
+		</nav>
+		<div class="container">
+			<div id="map"></div>
+  <!-- <input type="button" onclick="showPolygon([[-180, -90], [-180, 90], [180, 90], [180, -90], [-180, -90]])"  value="Hellow"/>-->
+		</div>
+	</body>
+   
+	
+</html>

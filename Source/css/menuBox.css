@@ -1,0 +1,228 @@
+body {
+	margin: 0;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.left-nav {
+	background: lightgray;
+	height: 100%;
+	overflow-y: overlay;
+	position: absolute;
+	z-index=999;
+	
+	/**flexbox兼容**/
+	display: -webkit-box;           /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;              /* OLD - Firefox 19- (doesn't work very well) */
+	display: -ms-flexbox;           /* TWEENER - IE 10 */
+	display: -webkit-flex;          /* NEW - Chrome */
+	display: flex;     
+	/**flexbox兼容**/
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	-o-flex-direction: row;
+	flex-direction: row;
+	
+}
+
+.right-nav {
+	background: lightgray;
+	height: 100%;
+	width:100%;
+	overflow-y: overlay;
+	position: absolute;
+	
+	/**flexbox兼容**/
+	display: -webkit-box;           /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;              /* OLD - Firefox 19- (doesn't work very well) */
+	display: -ms-flexbox;           /* TWEENER - IE 10 */
+	display: -webkit-flex;          /* NEW - Chrome */
+	display: flex;     
+	/**flexbox兼容**/
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	-o-flex-direction: row;
+	flex-direction: row;
+	z-index=999;
+}
+
+
+/**菜单box**/
+
+.menuBox {
+	width: 300px;
+	margin: 5px;
+}
+
+
+/**默认不显示二级菜单**/
+
+.menuBox .subMenuBox {
+	display: none;
+}
+
+
+/**一级菜单样式**/
+
+.spMenuBox>*>.spMenu {
+	align-items: center;
+	background: darkslateblue;
+	border-bottom: 1px solid lightgray;
+	cursor: pointer;
+	color: white;
+	
+	/**flexbox兼容**/
+	display: -webkit-box;           /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;              /* OLD - Firefox 19- (doesn't work very well) */
+	display: -ms-flexbox;           /* TWEENER - IE 10 */
+	display: -webkit-flex;          /* NEW - Chrome */
+	display: flex;     
+	/**flexbox兼容**/
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	-o-flex-direction: row;
+	flex-direction: row;
+	/**flexbox兼容**/
+	-webkit-justify-content: space-around;
+	-webkit-box-pack: space-around;
+	-moz-box-pack: space-around;
+	-ms-flex-pack: space-around;
+	justify-content: space-around;
+	/**user-select兼容**/
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+
+/**最后一个一级菜单样式**/
+
+.spMenuBox>*:last-child>.spMenu {
+	align-items: center;
+	background: darkslateblue;
+	border-bottom: 0px;
+	color: white;
+	cursor: pointer;
+	
+	/**flexbox兼容**/
+	display: -webkit-box;           /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;              /* OLD - Firefox 19- (doesn't work very well) */
+	display: -ms-flexbox;           /* TWEENER - IE 10 */
+	display: -webkit-flex;          /* NEW - Chrome */
+	display: flex;     
+	
+	/**flexbox兼容**/
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	-o-flex-direction: row;
+	flex-direction: row;
+	/**flexbox兼容**/
+	webkit-justify-content: space-around;
+	-webkit-box-pack: space-around;
+	-moz-box-pack: space-around;
+	-ms-flex-pack: space-around;
+	justify-content: space-around;
+	/**user-select兼容**/
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+
+/**箭头切换用动画实现**/
+
+.fa-angle-down {
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+}
+
+.spMenuItem.active>.spMenu>.fa-angle-down {
+	-webkit-transform: rotate(-180deg);
+	-moz-transform: rotate(-180deg);
+	-ms-transform: rotate(-180deg);
+	-o-transform: rotate(-180deg);
+	transform: rotate(-180deg);
+}
+
+
+/**二级菜单样式*/
+
+.subMenuBox>*>.subMenu {
+	align-items: center;
+	background: #ccc;
+	border-bottom: 1px solid lightyellow;
+	cursor: pointer;
+	padding: 5px 10px;
+	
+	/**flexbox兼容**/
+	display: -webkit-box;           /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;              /* OLD - Firefox 19- (doesn't work very well) */
+	display: -ms-flexbox;           /* TWEENER - IE 10 */
+	display: -webkit-flex;          /* NEW - Chrome */
+	display: flex;     
+	/**flexbox兼容**/
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	-o-flex-direction: row;
+	flex-direction: row;
+	/**user-select兼容**/
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	
+}
+
+
+/**最后一个二级菜单样式**/
+
+.subMenuBox>*:last-child>.subMenu {
+	align-items: center;
+	background: #ccc;
+	border-bottom: 0px;
+	cursor: pointer;
+	padding: 5px 10px;
+	
+	/**flexbox兼容**/
+	display: -webkit-box;           /* OLD - iOS 6-, Safari 3.1-6 */
+	display: -moz-box;              /* OLD - Firefox 19- (doesn't work very well) */
+	display: -ms-flexbox;           /* TWEENER - IE 10 */
+	display: -webkit-flex;          /* NEW - Chrome */
+	display: flex;
+	/**flexbox兼容**/
+	-webkit-box-orient: horizontal;
+	-webkit-flex-direction: row;
+	-moz-flex-direction: row;
+	-ms-flex-direction: row;
+	-o-flex-direction: row;
+	flex-direction: row;
+	/**user-select兼容**/
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+	
+}
